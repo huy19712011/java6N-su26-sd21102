@@ -27,16 +27,37 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public Todo add(Todo todo) {
-        return null;
+
+        return todoRepository.save(todo);
     }
 
     @Override
     public Todo update(Todo todo, long id) {
-        return null;
+
+        return todoRepository
+                .findById(id)
+                .map(existing -> {
+                    if (todo.getTitle() != null)
+                        existing.setTitle(todo.getTitle());
+                    if (todo.getDescription() != null)
+                        existing.setDescription(todo.getDescription());
+                    existing.setCompleted(todo.isCompleted());
+
+                    return todoRepository.save(existing);
+                })
+                .orElse(null);
     }
 
     @Override
     public Todo delete(long id) {
-        return null;
+
+        Todo deletedTodo = findById(id);
+
+        if (deletedTodo != null) {
+
+            todoRepository.deleteById(id);
+        }
+
+        return deletedTodo;
     }
 }
